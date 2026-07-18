@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '0.1.1';
+  var VERSION = '0.1.2';
   var TARGET_HOST = 'www.kidit-tsn.org.tw';
   var TARGET_PATH = '/Start/Index';
   var TARGET_FORM_ACTION = '/Start/SaveDeleteCancel';
@@ -235,7 +235,7 @@
   var toast = document.createElement('div');
   toast.id = 'kd-helper-toast';
   toast.setAttribute('role', 'status');
-  toast.innerHTML = '<span>💧 KiDit 小幫手 v' + VERSION + ' 已啟用（' + initialCount + ' 個欄位）</span>';
+  toast.innerHTML = '<span>KiDit 小幫手 v' + VERSION + ' 已啟用（' + initialCount + ' 個欄位）</span>';
   var close = document.createElement('button');
   close.type = 'button';
   close.setAttribute('aria-label', '關閉提示');

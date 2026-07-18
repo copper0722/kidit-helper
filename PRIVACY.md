@@ -1,6 +1,6 @@
 # 隱私說明
 
-KiDit 小幫手 v0.1.1 完全在目前的瀏覽器頁面內執行。
+KiDit 小幫手 v0.1.2 完全在目前的瀏覽器頁面內執行。
 
 - 不設置伺服器，不把資料傳到作者、GitHub 或第三方。
 - 不使用 `fetch`、XMLHttpRequest、WebSocket、Beacon 或外部程式碼。
