@@ -1,14 +1,13 @@
 (function () {
   'use strict';
 
-  var VERSION = '0.1.0';
+  var VERSION = '0.1.1';
   var TARGET_HOST = 'www.kidit-tsn.org.tw';
+  var TARGET_PATH = '/Start/Index';
+  var TARGET_FORM_ACTION = '/Start/SaveDeleteCancel';
   var TEST_MODE = window.__KIDIT_HELPER_TEST__ === true;
   var FIELD_LABELS = {
-    COUNTY: '搜尋縣市',
-    REALM: '搜尋區鄉市鎮',
-    MAILNO: '搜尋郵遞區號',
-    STREET: '搜尋路街'
+    TurnHospital: '搜尋轉入院所'
   };
 
   function stop(message) {
@@ -20,14 +19,14 @@
     return;
   }
 
-  if (!TEST_MODE && !/^\/Patient\/(Create|Edit)$/.test(window.location.pathname)) {
-    stop('目前只支援 KiDit 的病人新增／編輯頁。');
+  if (!TEST_MODE && window.location.pathname !== TARGET_PATH) {
+    stop('請開啟病人的「病史紀錄」頁，再點這個書籤。');
     return;
   }
 
-  var patientForm = document.querySelector('form[action="/Patient/SaveDeleteCancel"]');
-  if (!patientForm) {
-    stop('找不到預期的病人表單；KiDit 可能已改版，工具未執行。');
+  var targetForm = document.querySelector('form[action="' + TARGET_FORM_ACTION + '"]');
+  if (!targetForm) {
+    stop('找不到預期的病史表單；KiDit 可能已改版，工具未執行。');
     return;
   }
 
@@ -41,19 +40,21 @@
   var style = document.createElement('style');
   style.id = 'kd-helper-style';
   style.textContent = [
-    '.kd-helper-wrap{position:relative;margin:6px 0 10px;max-width:360px;font-family:Arial,"Noto Sans TC",sans-serif}',
-    '.kd-helper-label{display:block;margin-bottom:4px;color:#164e63;font-size:14px;font-weight:700}',
-    '.kd-helper-search{box-sizing:border-box;width:100%;min-height:44px;padding:9px 12px;border:2px solid #0e7490;border-radius:7px;background:#fff;color:#17202a;font-size:16px;line-height:1.4}',
+    '.kd-helper-host{display:flex!important;align-items:flex-start;gap:8px;flex-wrap:nowrap;overflow:visible}',
+    '.kd-helper-host>select{flex:0 1 auto}',
+    '.kd-helper-wrap{position:relative;box-sizing:border-box;flex:0 0 280px;min-width:230px;max-width:340px;padding:5px;border:1px solid #0891b2;border-radius:8px;background:#ecfeff;box-shadow:0 2px 8px rgba(14,116,144,.14);font-family:Arial,"Noto Sans TC",sans-serif}',
+    '.kd-helper-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}',
+    '.kd-helper-search{box-sizing:border-box;width:100%;min-height:40px;padding:7px 11px;border:2px solid #0e7490;border-radius:6px;background:#fff;color:#17202a;font-size:16px;line-height:1.4}',
     '.kd-helper-search:focus{outline:3px solid #fbbf24;outline-offset:2px}',
     '.kd-helper-menu{position:absolute;z-index:2147483646;left:0;right:0;max-height:300px;overflow:auto;margin:3px 0 0;padding:4px;border:1px solid #64748b;border-radius:7px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.22)}',
     '.kd-helper-menu[hidden]{display:none}',
     '.kd-helper-option{display:block;box-sizing:border-box;width:100%;min-height:44px;padding:10px 12px;border:0;border-radius:5px;background:#fff;color:#17202a;text-align:left;font-size:16px;cursor:pointer}',
     '.kd-helper-option:hover,.kd-helper-option.is-active{background:#cffafe;color:#164e63}',
     '.kd-helper-option:focus{outline:3px solid #fbbf24;outline-offset:-3px}',
-    '.kd-helper-note{display:block;margin-top:3px;color:#475569;font-size:12px}',
     '#kd-helper-toast{position:fixed;right:16px;bottom:16px;z-index:2147483647;display:flex;align-items:center;gap:10px;max-width:330px;padding:10px 12px;border:2px solid #0e7490;border-radius:8px;background:#ecfeff;color:#164e63;box-shadow:0 8px 24px rgba(15,23,42,.25);font:700 14px/1.4 Arial,"Noto Sans TC",sans-serif}',
     '#kd-helper-toast button{min-width:44px;min-height:44px;border:0;border-radius:6px;background:#0e7490;color:#fff;font-size:20px;cursor:pointer}',
-    '#kd-helper-toast button:focus{outline:3px solid #fbbf24;outline-offset:2px}'
+    '#kd-helper-toast button:focus{outline:3px solid #fbbf24;outline-offset:2px}',
+    '@media(max-width:900px){.kd-helper-host{flex-wrap:wrap}.kd-helper-wrap{flex:1 1 100%;min-width:0;max-width:340px}}'
   ].join('');
   document.head.appendChild(style);
 
@@ -77,7 +78,7 @@
 
     var label = document.createElement('label');
     var inputId = 'kd-helper-' + select.id;
-    label.className = 'kd-helper-label';
+    label.className = 'kd-helper-sr-only';
     label.htmlFor = inputId;
     label.textContent = FIELD_LABELS[select.id] || ('搜尋' + select.id);
 
@@ -99,16 +100,17 @@
     menu.setAttribute('role', 'listbox');
     input.setAttribute('aria-controls', menu.id);
 
-    var note = document.createElement('span');
-    note.className = 'kd-helper-note';
-    note.setAttribute('aria-live', 'polite');
-    note.textContent = '原下拉選單仍保留；本工具不會自動送出。';
+    var status = document.createElement('span');
+    status.className = 'kd-helper-sr-only';
+    status.setAttribute('aria-live', 'polite');
 
     wrap.appendChild(label);
     wrap.appendChild(input);
     wrap.appendChild(menu);
-    wrap.appendChild(note);
-    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(status);
+    var host = select.parentNode;
+    host.classList.add('kd-helper-host');
+    host.insertBefore(wrap, select.nextSibling);
 
     var matches = [];
     var activeIndex = -1;
@@ -123,7 +125,7 @@
     function choose(option) {
       option.selected = true;
       input.value = option.textContent.trim();
-      note.textContent = '已選：' + input.value + '。請確認原下拉選單後，再由人工存檔。';
+      status.textContent = '已選：' + input.value;
       closeMenu();
       select.dispatchEvent(new Event('input', { bubbles: true }));
       select.dispatchEvent(new Event('change', { bubbles: true }));
@@ -145,7 +147,7 @@
       menu.textContent = '';
       activeIndex = -1;
       if (!query) {
-        note.textContent = '原下拉選單仍保留；本工具不會自動送出。';
+        status.textContent = '';
         closeMenu();
         return;
       }
@@ -155,7 +157,7 @@
       }).slice(0, 12);
 
       if (!matches.length) {
-        note.textContent = '找不到符合「' + input.value + '」的選項。';
+        status.textContent = '找不到符合「' + input.value + '」的選項。';
         closeMenu();
         return;
       }
@@ -172,7 +174,7 @@
       });
       menu.hidden = false;
       input.setAttribute('aria-expanded', 'true');
-      note.textContent = '找到 ' + matches.length + ' 筆；可用上下方向鍵選擇。';
+      status.textContent = '找到 ' + matches.length + ' 筆；可用上下方向鍵選擇。';
     }
 
     input.addEventListener('input', render);
@@ -203,7 +205,7 @@
     var optionObserver = new MutationObserver(function () {
       var selected = select.options[select.selectedIndex];
       input.value = selected && selected.value !== '' ? selected.textContent.trim() : '';
-      note.textContent = '選項已由 KiDit 更新；請重新搜尋並確認。';
+      status.textContent = '轉入院所選項已由 KiDit 更新。';
       closeMenu();
     });
     optionObserver.observe(select, { childList: true, subtree: true });
@@ -221,19 +223,19 @@
 
   var initialCount = enhanceAll();
   var observer = new MutationObserver(function () { enhanceAll(); });
-  observer.observe(patientForm, { childList: true, subtree: true });
+  observer.observe(targetForm, { childList: true, subtree: true });
 
   if (!document.querySelector('.kd-helper-wrap')) {
     observer.disconnect();
     style.remove();
-    stop('找不到可搜尋的長下拉；KiDit 可能已改版，工具未執行。');
+    stop('找不到「轉入院所」下拉選單；KiDit 可能已改版，工具未執行。');
     return;
   }
 
   var toast = document.createElement('div');
   toast.id = 'kd-helper-toast';
   toast.setAttribute('role', 'status');
-  toast.innerHTML = '<span>KiDit 小幫手 v' + VERSION + ' 已啟用（' + initialCount + ' 個欄位）</span>';
+  toast.innerHTML = '<span>💧 KiDit 小幫手 v' + VERSION + ' 已啟用（' + initialCount + ' 個欄位）</span>';
   var close = document.createElement('button');
   close.type = 'button';
   close.setAttribute('aria-label', '關閉提示');

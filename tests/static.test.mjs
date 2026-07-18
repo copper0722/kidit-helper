@@ -8,6 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = await readFile(path.join(root, 'src/bookmarklet.js'), 'utf8');
 const built = (await readFile(path.join(root, 'dist/kidit-helper.bookmarklet.txt'), 'utf8')).trim();
 const site = await readFile(path.join(root, 'docs/index.html'), 'utf8');
+const favicon = await readFile(path.join(root, 'docs/favicon.svg'), 'utf8');
 const pkg = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
 
 test('bookmarklet source parses', () => {
@@ -43,4 +44,13 @@ test('installation page has no external runtime dependencies', () => {
   assert.doesNotMatch(site, /<script\b/i);
   assert.doesNotMatch(site, /<(img|link)\b[^>]+(?:src|href)=["']https?:/i);
   assert.match(site, /拖到書籤列/);
+});
+
+test('vivid bookmark identity is present without a plugin dependency', () => {
+  assert.match(site, /rel="icon"[^>]+href="\.\/favicon\.svg"/);
+  assert.match(site, /💧 KiDit 小幫手 v/);
+  assert.match(favicon, /<svg\b/);
+  assert.match(favicon, /#0F172A/);
+  assert.match(favicon, /#38BDF8/);
+  assert.doesNotMatch(favicon, /<script\b/i);
 });

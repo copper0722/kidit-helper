@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="KiDit 小幫手：不必安裝擴充功能的護理站書籤工具。">
+  <meta name="theme-color" content="#0F172A">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <title>KiDit 小幫手 v__VERSION__</title>
   <style>
     :root{color-scheme:light;--ink:#17202a;--muted:#52606d;--navy:#164e63;--teal:#0e7490;--pale:#ecfeff;--line:#cbd5e1;--gold:#fbbf24;--white:#fff}
@@ -21,7 +23,8 @@
     p,ol,ul{margin-top:0}
     li+li{margin-top:8px}
     .install{border:2px solid var(--teal);background:var(--pale);text-align:center}
-    .bookmark{display:inline-flex;min-height:56px;align-items:center;justify-content:center;margin:12px auto 16px;padding:12px 22px;border-radius:10px;background:var(--teal);color:var(--white);font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 6px 16px rgba(14,116,144,.25);cursor:grab}
+    .bookmark{display:inline-flex;min-height:56px;align-items:center;justify-content:center;gap:10px;margin:12px auto 16px;padding:12px 22px;border-radius:10px;background:var(--teal);color:var(--white);font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 6px 16px rgba(14,116,144,.25);cursor:grab}
+    .bookmark img{width:30px;height:30px;border-radius:7px}
     .bookmark:hover{background:var(--navy)}
     .bookmark:focus{outline:4px solid var(--gold);outline-offset:3px}
     .bookmark:active{cursor:grabbing}
@@ -48,7 +51,8 @@
       <span class="badge">v__VERSION__</span>
       <h2 id="install-title">管理者：拖曳一次完成設定</h2>
       <p>先顯示瀏覽器書籤列，再把下面按鈕<strong>拖到書籤列</strong>。不要只點按鈕。</p>
-      <a class="bookmark" href="__BOOKMARKLET_HREF__">KiDit 小幫手 v__VERSION__</a>
+      <a class="bookmark" href="__BOOKMARKLET_HREF__"><img src="./favicon.svg" alt="">💧 KiDit 小幫手 v__VERSION__</a>
+      <p><strong>已有舊版？</strong> 請先刪除原書籤再重新拖曳；新版名稱前方有醒目的藍色水滴。</p>
       <div class="callout"><strong>看不到書籤列？</strong> Chrome／Edge 在 Windows 可按 <code>Ctrl + Shift + B</code>；Mac 可按 <code>⌘ + Shift + B</code>。</div>
     </section>
 
@@ -56,7 +60,7 @@
       <h2 id="daily-title">護理師：每天只做三步</h2>
       <ol>
         <li>照常登入 KiDit，開啟病人新增或編輯頁。</li>
-        <li>點書籤列的「KiDit 小幫手」，在新出現的搜尋框輸入關鍵字。</li>
+        <li>點書籤列的「💧 KiDit 小幫手」，在新出現的搜尋框輸入關鍵字。</li>
         <li>選好後確認 KiDit 原本的下拉欄位，再由人工按原有儲存按鈕。</li>
       </ol>
       <p class="callout"><strong>小幫手不會自動儲存。</strong> 原欄位與 KiDit 原流程都會保留。</p>

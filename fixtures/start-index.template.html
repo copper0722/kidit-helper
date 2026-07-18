@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>KiDit 小幫手 v__VERSION__ 轉入院所測試頁</title>
+  <style>
+    body{max-width:1040px;margin:32px auto;padding:0 20px;color:#17202a;font:16px/1.6 Arial,sans-serif}
+    .install{display:inline-block;min-height:44px;margin-bottom:20px;padding:9px 14px;border-radius:7px;background:#0e7490;color:#fff;font-weight:700;text-decoration:none}
+    .row{display:flex;align-items:flex-start;gap:28px;padding:22px;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc}
+    .span3{width:250px}.span4{width:650px}.control-label{display:block;margin-bottom:6px;font-weight:700}.controls select{min-width:210px;min-height:40px;font-size:16px}
+    #eventLog{margin-top:24px;padding:12px;background:#f1f5f9}
+  </style>
+</head>
+<body>
+  <h1>KiDit 小幫手 v__VERSION__：轉入院所</h1>
+  <p>點下面按鈕模擬書籤執行；本頁不含真實病人資料。</p>
+  <a class="install" id="runBookmarklet" href="__BOOKMARKLET_HREF__">啟用 KiDit 小幫手</a>
+
+  <form action="/Start/SaveDeleteCancel" method="post">
+    <div class="row">
+      <div class="span3">
+        <div class="control-group">
+          <label class="control-label" for="TurnCounty">縣市</label>
+          <div class="controls">
+            <select id="TurnCounty" name="TurnCounty">
+              <option value=""></option><option value="00">00 台北市</option><option value="01">01 新北市</option><option value="03">03 桃園縣</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="span4" id="TurnHospitalParital">
+        <div class="control-group">
+          <label class="control-label" for="TurnHospital">轉入院所</label>
+          <div class="controls">
+            <select id="TurnHospital" name="TurnHospital">
+              <option value=""></option>
+              <option value="0001">0001 台北市立聯合醫院</option>
+              <option value="0002">0002 國立臺灣大學醫學院附設醫院</option>
+              <option value="0003">0003 台北榮民總醫院</option>
+              <option value="0004">0004 三軍總醫院</option>
+              <option value="0005">0005 馬偕紀念醫院</option>
+              <option value="0006">0006 新光吳火獅紀念醫院</option>
+              <option value="0007">0007 國泰綜合醫院</option>
+              <option value="0008">0008 臺北醫學大學附設醫院</option>
+              <option value="0009">0009 振興醫院</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="submit">官方存檔（測試頁不應自動觸發）</button>
+  </form>
+  <div id="eventLog" aria-live="polite">尚未選取</div>
+
+  <script>
+    window.__KIDIT_HELPER_TEST__ = true;
+    var form = document.querySelector('form');
+    var submitCount = 0;
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      submitCount += 1;
+      document.getElementById('eventLog').textContent = 'submit=' + submitCount;
+    });
+    document.getElementById('TurnHospital').addEventListener('change', function (event) {
+      document.getElementById('eventLog').textContent = 'TurnHospital=' + event.target.value + '; change=1; submit=' + submitCount;
+    });
+    document.getElementById('TurnCounty').addEventListener('change', function () {
+      var partial = document.getElementById('TurnHospitalParital');
+      partial.innerHTML = '<div class="control-group"><label class="control-label" for="TurnHospital">轉入院所</label><div class="controls">' +
+        '<select id="TurnHospital" name="TurnHospital"><option value=""></option>' +
+        '<option value="0301">0301 衛生福利部桃園醫院</option><option value="0302">0302 長庚醫療財團法人林口長庚紀念醫院</option>' +
+        '<option value="0303">0303 敏盛綜合醫院</option><option value="0304">0304 陽明醫院</option>' +
+        '<option value="0305">0305 國軍桃園總醫院</option><option value="0306">0306 新國民醫院</option>' +
+        '<option value="0307">0307 桃新醫院</option><option value="0308">0308 華揚醫院</option>' +
+        '<option value="0309">0309 聖保祿醫院</option></select></div></div>';
+      document.getElementById('TurnHospital').addEventListener('change', function (event) {
+        document.getElementById('eventLog').textContent = 'TurnHospital=' + event.target.value + '; change=1; submit=' + submitCount;
+      });
+      document.getElementById('eventLog').textContent = 'county-updated; submit=' + submitCount;
+    });
+  </script>
+</body>
+</html>

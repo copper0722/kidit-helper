@@ -5,8 +5,9 @@ import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = (await readFile(path.join(root, 'src/bookmarklet.js'), 'utf8')).trim();
-const fixture = await readFile(path.join(root, 'fixtures/patient-create.template.html'), 'utf8');
+const fixture = await readFile(path.join(root, 'fixtures/start-index.template.html'), 'utf8');
 const site = await readFile(path.join(root, 'site/index.template.html'), 'utf8');
+const favicon = await readFile(path.join(root, 'site/favicon.svg'), 'utf8');
 const pkg = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
 const sourceVersion = source.match(/var VERSION = '([^']+)'/)?.[1];
 
@@ -25,9 +26,10 @@ const render = (template) => template
 await mkdir(path.join(root, 'dist'), { recursive: true });
 await mkdir(path.join(root, 'docs'), { recursive: true });
 await writeFile(path.join(root, 'dist/kidit-helper.bookmarklet.txt'), `${href}\n`);
-await writeFile(path.join(root, 'dist/patient-create-test.html'), render(fixture));
+await writeFile(path.join(root, 'dist/start-index-test.html'), render(fixture));
 await writeFile(path.join(root, 'docs/kidit-helper.bookmarklet.txt'), `${href}\n`);
 await writeFile(path.join(root, 'docs/index.html'), render(site));
+await writeFile(path.join(root, 'docs/favicon.svg'), favicon);
 await writeFile(
   path.join(root, 'docs/version.json'),
   `${JSON.stringify({ version: pkg.version, source_sha256: sourceSha256 }, null, 2)}\n`,
