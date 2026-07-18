@@ -70,7 +70,9 @@ test('custom bookmark favicon is embedded in the Chrome import artifact', () => 
   assert.doesNotMatch(favicon, /<script\b/i);
   assert.deepEqual(faviconPng.subarray(0, 8), Buffer.from('89504e470d0a1a0a', 'hex'));
   assert.match(bookmarksImport, /PERSONAL_TOOLBAR_FOLDER="true"/);
-  assert.match(bookmarksImport, /HREF="javascript:/);
+  const importedHref = bookmarksImport.match(/HREF="(javascript:[^"]+)"/)?.[1];
+  assert.equal(importedHref, built, 'imported bookmark should run the exact tested build');
+  assert.match(bookmarksImport, new RegExp(`>KiDit 小幫手 v${pkg.version.replaceAll('.', '\\.')}(?:<|$)`));
   const iconData = bookmarksImport.match(/ICON="data:image\/png;base64,([A-Za-z0-9+/=]+)"/)?.[1];
   assert.ok(iconData, 'bookmark import should contain an embedded PNG icon');
   assert.deepEqual(Buffer.from(iconData, 'base64'), faviconPng);
