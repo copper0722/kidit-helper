@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '0.1.3';
+  var VERSION = '0.1.4';
   var TARGET_HOST = 'www.kidit-tsn.org.tw';
   var TARGET_PATH_PATTERN = /^\/Start\/Edit\/[1-9]\d*\/?$/;
   var TARGET_FORM_ACTION = '/Start/SaveDeleteCancel';

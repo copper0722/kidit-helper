@@ -25,12 +25,10 @@
     li+li{margin-top:8px}
     .install{border:2px solid var(--teal);background:var(--pale)}
     .action{text-align:center}
-    .download{display:inline-flex;min-height:56px;align-items:center;justify-content:center;gap:10px;margin:12px auto 16px;padding:12px 22px;border-radius:10px;background:var(--teal);color:var(--white);font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 6px 16px rgba(14,116,144,.25);cursor:pointer;transition:background-color .2s ease}
-    .download img{width:30px;height:30px;border-radius:7px}
-    .download:hover{background:var(--navy)}
-    .download:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
-    .preview{display:inline-flex;align-items:center;gap:9px;margin:4px 0 14px;padding:7px 14px;border:1px solid #cbd5e1;border-radius:999px;background:#f1f5f9;color:#0f172a;font-weight:700}
-    .preview img{width:24px;height:24px;border-radius:5px}
+    .bookmark{display:inline-flex;min-height:56px;align-items:center;justify-content:center;margin:14px auto;padding:12px 24px;border:2px solid var(--teal);border-radius:10px;background:var(--teal);color:var(--white);font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 6px 16px rgba(14,116,144,.25);cursor:grab;transition:background-color .2s ease,border-color .2s ease}
+    .bookmark:hover{border-color:var(--navy);background:var(--navy)}
+    .bookmark:active{cursor:grabbing}
+    .bookmark:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
     .callout{margin:16px 0 0;padding:14px;border-left:5px solid var(--gold);background:#fffbeb;text-align:left}
     .badge{display:inline-block;padding:3px 9px;border-radius:999px;background:#cffafe;color:var(--navy);font-weight:700}
     .safe{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0;list-style:none}
@@ -52,18 +50,12 @@
   <main class="shell">
     <section class="install" aria-labelledby="install-title">
       <span class="badge">v__VERSION__</span>
-      <h2 id="install-title">管理者：匯入一次，帶自訂圖示</h2>
-      <ol>
-        <li>若已有舊版，先從書籤列刪除「KiDit 小幫手」。</li>
-        <li>下載下方的書籤安裝檔。</li>
-        <li>Chrome 右上角 <strong>⋮ → 書籤和清單 → 匯入書籤和設定</strong>，選取剛下載的檔案。</li>
-        <li>若書籤出現在「已匯入」資料夾，將「KiDit 小幫手」拖到書籤列。</li>
-      </ol>
+      <h2 id="install-title">管理者：直接拖到書籤列</h2>
+      <p id="drag-help">按住下方按鈕，拖到 Chrome 的書籤列，就完成了。</p>
       <div class="action">
-        <a class="download" href="./kidit-helper-bookmarks.html" download="kidit-helper-v__VERSION__-bookmarks.html"><img src="./favicon.svg" alt="">下載自訂圖示書籤檔</a>
-        <div><span class="preview"><img src="./favicon.svg" alt="藍色水滴圖示">KiDit 小幫手 v__VERSION__</span></div>
+        <a id="installBookmarklet" class="bookmark" href="__BOOKMARKLET_HREF__" aria-describedby="drag-help">KiDit 小幫手 v__VERSION__</a>
       </div>
-      <div class="callout"><strong>護理師不必處理安裝。</strong> 管理者設定完成後，日常仍只要點一下書籤。</div>
+      <div class="callout"><strong>出現小地球是正常的。</strong> Chrome 對直接拖曳的工具書籤使用預設圖示，不影響功能。已有舊版時，先刪除舊書籤再拖新版。</div>
     </section>
 
     <section aria-labelledby="daily-title">

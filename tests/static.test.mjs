@@ -76,9 +76,11 @@ test('release version is consistent across source and installation page', () => 
 test('installation page has no external runtime dependencies', () => {
   assert.doesNotMatch(site, /<script\b/i);
   assert.doesNotMatch(site, /<(img|link)\b[^>]+(?:src|href)=["']https?:/i);
-  assert.match(site, /下載自訂圖示書籤檔/);
-  assert.match(site, /匯入書籤和設定/);
-  assert.match(site, /href="\.\/kidit-helper-bookmarks\.html"/);
+  assert.match(site, /管理者：直接拖到書籤列/);
+  assert.match(site, /id="installBookmarklet"/);
+  assert.doesNotMatch(site, /下載自訂圖示書籤檔|匯入書籤和設定/);
+  const draggedHref = site.match(/id="installBookmarklet"[^>]+href="(javascript:[^"]+)"/)?.[1];
+  assert.equal(draggedHref, built, 'dragged bookmark should run the exact tested build');
 });
 
 test('custom bookmark favicon is embedded in the Chrome import artifact', () => {
