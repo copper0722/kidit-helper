@@ -1,6 +1,6 @@
 {
   "name": "kidit-helper",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "A self-contained KiDit bookmarklet for searchable transfer-hospital selection.",
   "scripts": {

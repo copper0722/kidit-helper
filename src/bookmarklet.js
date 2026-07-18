@@ -1,9 +1,9 @@
 (function () {
   'use strict';
 
-  var VERSION = '0.1.2';
+  var VERSION = '0.1.3';
   var TARGET_HOST = 'www.kidit-tsn.org.tw';
-  var TARGET_PATH = '/Start/Index';
+  var TARGET_PATH_PATTERN = /^\/Start\/Edit\/[1-9]\d*\/?$/;
   var TARGET_FORM_ACTION = '/Start/SaveDeleteCancel';
   var TEST_MODE = window.__KIDIT_HELPER_TEST__ === true;
   var FIELD_LABELS = {
@@ -19,7 +19,7 @@
     return;
   }
 
-  if (!TEST_MODE && window.location.pathname !== TARGET_PATH) {
+  if (!TEST_MODE && !TARGET_PATH_PATTERN.test(window.location.pathname)) {
     stop('請開啟病人的「病史紀錄」頁，再點這個書籤。');
     return;
   }

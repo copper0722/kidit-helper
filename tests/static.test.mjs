@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
 import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -29,12 +30,32 @@ test('built artifact is a bounded javascript URL', () => {
   assert.ok(Buffer.byteLength(built, 'utf8') < 40000, 'bookmarklet should remain below 40 KB');
 });
 
+function firstAlertFor(pathname) {
+  const alerts = [];
+  vm.runInNewContext(source, {
+    window: {
+      __KIDIT_HELPER_TEST__: false,
+      location: { hostname: 'www.kidit-tsn.org.tw', pathname },
+      alert: (message) => alerts.push(message),
+    },
+    document: { querySelector: () => null },
+  });
+  return alerts[0];
+}
+
 test('v0.1 scope is limited to transfer-hospital search', () => {
   assert.match(source, /option\.value !== ''/);
-  assert.match(source, /TARGET_PATH = '\/Start\/Index'/);
+  assert.match(source, /TARGET_PATH_PATTERN = \/\^\\\/Start\\\/Edit/);
   assert.match(source, /TARGET_FORM_ACTION = '\/Start\/SaveDeleteCancel'/);
   assert.match(source, /TurnHospital: '搜尋轉入院所'/);
   assert.doesNotMatch(source, /\b(?:COUNTY|TOWN|MAILNO|ADDR|ROAD):/);
+});
+
+test('route guard accepts only numeric Start/Edit history pages', () => {
+  assert.match(firstAlertFor('/Start/Edit/305'), /找不到預期的病史表單/);
+  assert.match(firstAlertFor('/Start/Edit/305/'), /找不到預期的病史表單/);
+  assert.match(firstAlertFor('/Start/Index'), /請開啟病人的「病史紀錄」頁/);
+  assert.match(firstAlertFor('/Start/Edit/not-a-number'), /請開啟病人的「病史紀錄」頁/);
 });
 
 test('add-on sits beside and remains visually distinct from the native select', () => {

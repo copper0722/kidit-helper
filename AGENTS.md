@@ -4,7 +4,7 @@ Scope: public, nurse-first KiDit bookmarklet and its static installation site.
 
 - `src/bookmarklet.js` is the sole source of runtime behavior.
 - The tool must remain self-contained: no remote code, telemetry, persistence, cookies, or automatic form submission.
-- Fail closed unless the exact KiDit host, `/Start/Index` path, and `/Start/SaveDeleteCancel` form action match.
+- Fail closed unless the exact KiDit host, numeric `/Start/Edit/<id>` path, and `/Start/SaveDeleteCancel` form action match.
 - v0.1 enhances only the native `TurnHospital` select; defer every additional field until nurse feedback.
 - The primary installer is a Chrome bookmarks HTML import with an embedded PNG favicon; do not represent text symbols as a custom bookmark icon.
 - Preserve native controls, exact option values, blank semantics, KiDit change events, and manual save.
