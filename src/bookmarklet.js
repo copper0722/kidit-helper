@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '0.1.4';
+  var VERSION = '0.1.5';
   var TARGET_HOST = 'www.kidit-tsn.org.tw';
   var TARGET_PATH_PATTERN = /^\/Start\/Edit\/[1-9]\d*\/?$/;
   var TARGET_FORM_ACTION = '/Start/SaveDeleteCancel';
@@ -36,6 +36,8 @@
     if (existingInput) existingInput.focus();
     return;
   }
+  if (targetForm.dataset.kdHelperActive === VERSION) return;
+  targetForm.dataset.kdHelperActive = VERSION;
 
   var style = document.createElement('style');
   style.id = 'kd-helper-style';
@@ -45,6 +47,7 @@
     '.kd-helper-wrap{position:relative;box-sizing:border-box;flex:0 0 280px;min-width:230px;max-width:340px;padding:5px;border:1px solid #0891b2;border-radius:8px;background:#ecfeff;box-shadow:0 2px 8px rgba(14,116,144,.14);font-family:Arial,"Noto Sans TC",sans-serif}',
     '.kd-helper-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}',
     '.kd-helper-search{box-sizing:border-box;width:100%;min-height:40px;padding:7px 11px;border:2px solid #0e7490;border-radius:6px;background:#fff;color:#17202a;font-size:16px;line-height:1.4}',
+    '.kd-helper-search:disabled{border-color:#94a3b8;background:#f1f5f9;color:#475569;cursor:not-allowed}',
     '.kd-helper-search:focus{outline:3px solid #fbbf24;outline-offset:2px}',
     '.kd-helper-menu{position:absolute;z-index:2147483646;left:0;right:0;max-height:300px;overflow:auto;margin:3px 0 0;padding:4px;border:1px solid #64748b;border-radius:7px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.22)}',
     '.kd-helper-menu[hidden]{display:none}',
@@ -69,7 +72,7 @@
   }
 
   function enhanceSelect(select) {
-    if (!select || select.dataset.kdHelper === VERSION || select.options.length < 7) return false;
+    if (!select || select.dataset.kdHelper === VERSION) return false;
 
     select.dataset.kdHelper = VERSION;
     var wrap = document.createElement('div');
@@ -122,6 +125,20 @@
       activeIndex = -1;
     }
 
+    function syncAvailability(message) {
+      var hasOptions = searchableOptions(select).length > 0;
+      input.disabled = !hasOptions;
+      input.placeholder = hasOptions ? '輸入關鍵字' : '請先選擇縣市';
+      if (!hasOptions) {
+        input.value = '';
+        status.textContent = '請先選擇縣市。';
+        closeMenu();
+      } else if (message) {
+        status.textContent = message;
+      }
+      return hasOptions;
+    }
+
     function choose(option) {
       option.selected = true;
       input.value = option.textContent.trim();
@@ -143,6 +160,7 @@
     }
 
     function render() {
+      if (!syncAvailability()) return;
       var query = normalized(input.value);
       menu.textContent = '';
       activeIndex = -1;
@@ -201,14 +219,16 @@
     select.addEventListener('change', function () {
       var selected = select.options[select.selectedIndex];
       input.value = selected && selected.value !== '' ? selected.textContent.trim() : '';
+      syncAvailability();
     });
     var optionObserver = new MutationObserver(function () {
       var selected = select.options[select.selectedIndex];
       input.value = selected && selected.value !== '' ? selected.textContent.trim() : '';
-      status.textContent = '轉入院所選項已由 KiDit 更新。';
+      syncAvailability('轉入院所選項已由 KiDit 更新。');
       closeMenu();
     });
     optionObserver.observe(select, { childList: true, subtree: true });
+    syncAvailability();
 
     return true;
   }
@@ -222,20 +242,23 @@
   }
 
   var initialCount = enhanceAll();
-  var observer = new MutationObserver(function () { enhanceAll(); });
+  var toastText;
+  var observer = new MutationObserver(function () {
+    var addedCount = enhanceAll();
+    if (addedCount && toastText) {
+      toastText.textContent = 'KiDit 小幫手 v' + VERSION + ' 已啟用';
+    }
+  });
   observer.observe(targetForm, { childList: true, subtree: true });
-
-  if (!document.querySelector('.kd-helper-wrap')) {
-    observer.disconnect();
-    style.remove();
-    stop('找不到「轉入院所」下拉選單；KiDit 可能已改版，工具未執行。');
-    return;
-  }
 
   var toast = document.createElement('div');
   toast.id = 'kd-helper-toast';
   toast.setAttribute('role', 'status');
-  toast.innerHTML = '<span>KiDit 小幫手 v' + VERSION + ' 已啟用（' + initialCount + ' 個欄位）</span>';
+  toastText = document.createElement('span');
+  toastText.textContent = initialCount
+    ? 'KiDit 小幫手 v' + VERSION + ' 已啟用'
+    : 'KiDit 小幫手 v' + VERSION + ' 已待命；請將「是否他院轉入」選為 Yes';
+  toast.appendChild(toastText);
   var close = document.createElement('button');
   close.type = 'button';
   close.setAttribute('aria-label', '關閉提示');

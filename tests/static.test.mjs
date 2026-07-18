@@ -58,6 +58,16 @@ test('route guard accepts only numeric Start/Edit history pages', () => {
   assert.match(firstAlertFor('/Start/Edit/not-a-number'), /請開啟病人的「病史紀錄」頁/);
 });
 
+test('helper waits for transfer controls and options when the initial answer is No', () => {
+  assert.doesNotMatch(source, /select\.options\.length < 7/);
+  assert.match(source, /targetForm\.dataset\.kdHelperActive = VERSION/);
+  assert.match(source, /已待命；請將「是否他院轉入」選為 Yes/);
+  assert.match(source, /input\.disabled = !hasOptions/);
+  assert.match(source, /請先選擇縣市/);
+  assert.doesNotMatch(source, /找不到「轉入院所」下拉選單/);
+  assert.doesNotMatch(source, /observer\.disconnect\(\)/);
+});
+
 test('add-on sits beside and remains visually distinct from the native select', () => {
   assert.match(source, /\.kd-helper-host\{[^}]*flex-wrap:nowrap/);
   assert.match(source, /\.kd-helper-wrap\{[^}]*background:#ecfeff/);
