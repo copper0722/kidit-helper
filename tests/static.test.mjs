@@ -27,11 +27,20 @@ test('built artifact is a bounded javascript URL', () => {
   assert.ok(Buffer.byteLength(built, 'utf8') < 40000, 'bookmarklet should remain below 40 KB');
 });
 
-test('blank option protection and manual-save message remain explicit', () => {
+test('v0.1 scope is limited to transfer-hospital search', () => {
   assert.match(source, /option\.value !== ''/);
-  assert.match(source, /選項已由 KiDit 更新/);
-  assert.match(source, /不會自動送出/);
-  assert.match(source, /再由人工存檔/);
+  assert.match(source, /TARGET_PATH = '\/Start\/Index'/);
+  assert.match(source, /TARGET_FORM_ACTION = '\/Start\/SaveDeleteCancel'/);
+  assert.match(source, /TurnHospital: '搜尋轉入院所'/);
+  assert.doesNotMatch(source, /\b(?:COUNTY|TOWN|MAILNO|ADDR|ROAD):/);
+});
+
+test('add-on sits beside and remains visually distinct from the native select', () => {
+  assert.match(source, /\.kd-helper-host\{[^}]*flex-wrap:nowrap/);
+  assert.match(source, /\.kd-helper-wrap\{[^}]*background:#ecfeff/);
+  assert.match(source, /host\.insertBefore\(wrap, select\.nextSibling\)/);
+  assert.match(source, /\.kd-helper-sr-only/);
+  assert.doesNotMatch(source, /原下拉選單仍保留；本工具不會自動送出/);
 });
 
 test('release version is consistent across source and installation page', () => {
